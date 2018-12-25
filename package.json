@@ -1,0 +1,27 @@
+{
+  "name": "daytripper",
+  "version": "1.0.0",
+  "description": "a minimal calendar for react",
+  "main": "dist/index.js",
+  "author": "Noah Peller <napeller@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "date-fns": "^1.30.1",
+    "react": "^16.7.0"
+  },
+  "devDependencies": {
+    "@types/date-fns": "^2.6.0",
+    "@types/react": "^16.7.18",
+    "date-fns": "^1.30.1",
+    "eslint": "^5.11.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "prettier": "^1.15.3",
+    "react": "^16.7.0",
+    "typescript": "^3.2.2",
+    "typescript-eslint-parser": "^21.0.2"
+  },
+  "types": "dist/index.d.ts"
+}
