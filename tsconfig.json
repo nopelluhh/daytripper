@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    /* Basic Options */
     "declaration": true,
     "esModuleInterop": true,
     "jsx": "react",
