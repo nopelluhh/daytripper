@@ -1,69 +1,75 @@
 import React from 'react'
 
-import { getMonthData } from './utils'
+import { resolveMonthData, resolveEvents, IEvent } from './utils'
 
-export interface IDayProps {
-    date: number | null
+type ResolvedDay = {
+  day: number;
+  date: Date;
+} | null
+
+export interface IDayProps<T = {}> {
+  day: number | null
+  date: Date | null
+  events: IEvent<T>[] | null
 }
 
 export interface IWeekProps {
-  weekNumber?: number
+  weekNumber?: number,
+  week: ResolvedDay[]
 }
 
 export interface IEventProps {
-    events: any[]
+  events: any[]
 }
 
-export interface ICalendarProps {
-    style?: React.CSSProperties
-    className?: string
-    month?: Date
-    events?: any[] | { [key: number]: any }
-    dayComponent?: React.ComponentType<IDayProps>
-    weekComponent?: React.ComponentType<IWeekProps>
-    eventComponent?: React.ComponentType<IEventProps>
+export interface IDaytripperProps<T = {}> {
+  style?: React.CSSProperties
+  className?: string
+  month?: Date
+  events: IEvent<T>[]
+  dayComponent: React.ComponentType<IDayProps>
+  weekComponent: React.ComponentType<IWeekProps>
+  eventComponent: React.ComponentType<IEventProps>
 }
 
-const Calendar: React.FunctionComponent<ICalendarProps> = ({
-    // Container
-    style,
-    className,
+const Daytripper: React.FunctionComponent<IDaytripperProps> = ({
+  // Container
+  style,
+  className,
 
-    // Data
-    month,
-    events = [],
+  // Data
+  month = new Date(),
+  events = [],
 
-    // Subcomponents
-    dayComponent,
-    weekComponent,
-    eventComponent,
+  // Subcomponents
+  dayComponent: Day,
+  weekComponent: Week,
+  eventComponent: Events,
 }) => {
-    const { weeks } = getMonthData(month)
-    const Day = dayComponent!
-    const Week = weekComponent!
-    const Events = eventComponent!
+  const allResolvedEvents = resolveEvents(events, month);
+  const { weeks } = resolveMonthData(month, allResolvedEvents)
 
-    return (
-        <div style={style} className={className}>
-            {weeks.map((w, i) => (
-                <Week key={i} weekNumber={i}>
-                    {w.map(d => (
-                        <Day date={d}>
-                            {d === null ? null : d + 1}
-                            {d && events[d] && (
-                                <Events events={events[d]}>{events[d]}</Events>
-                            )}
-                        </Day>
-                    ))}
-                </Week>
-            ))}
-        </div>
-    )
+  return (
+    <div style={style} className={className}>
+      {weeks.map((w, i) => (
+        <Week key={i} weekNumber={i} week={w}>
+          {w.map(d => (
+            <Day day={d === null ? d : d.day} date={d && d.date} events={d && allResolvedEvents[d.day]}>
+              {d && allResolvedEvents[d.day] ? (
+                <Events events={allResolvedEvents[d.day]} />
+              ) : null}
+            </Day>
+          ))}
+        </Week>
+      ))}
+    </div>
+  )
 }
 
-Calendar.defaultProps = {
-    dayComponent: ({ date }) => <div>{date}</div>,
-    weekComponent: ({ children }) => <div>{children}</div>,
+Daytripper.defaultProps = {
+  dayComponent: ({ date }) => <div>{date}</div>,
+  weekComponent: ({ children }) => <div>{children}</div>,
+  eventComponent: ({ events }) => <div>{JSON.stringify(events)}</div>
 }
 
-export default Calendar
+export default Daytripper

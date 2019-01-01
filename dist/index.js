@@ -5,23 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importDefault(require("react"));
 var utils_1 = require("./utils");
-var Calendar = function (_a) {
+var Daytripper = function (_a) {
     var 
     // Container
     style = _a.style, className = _a.className, 
     // Data
-    month = _a.month, _b = _a.events, events = _b === void 0 ? [] : _b, 
+    _b = _a.month, 
+    // Data
+    month = _b === void 0 ? new Date() : _b, _c = _a.events, events = _c === void 0 ? [] : _c, 
     // Subcomponents
-    dayComponent = _a.dayComponent, weekComponent = _a.weekComponent, eventComponent = _a.eventComponent;
-    var weeks = utils_1.getMonthData(month).weeks;
-    var Day = dayComponent;
-    var Week = weekComponent;
-    var Events = eventComponent;
-    return (react_1.default.createElement("div", { style: style, className: className }, weeks.map(function (w, i) { return (react_1.default.createElement(Week, { key: i, weekNumber: i }, w.map(function (d) { return (react_1.default.createElement(Day, { date: d },
-        d === null ? null : d + 1,
-        d && events[d] && (react_1.default.createElement(Events, { events: events[d] }, events[d])))); }))); })));
+    Day = _a.dayComponent, Week = _a.weekComponent, Events = _a.eventComponent;
+    var allResolvedEvents = utils_1.resolveEvents(events, month);
+    var weeks = utils_1.resolveMonthData(month, allResolvedEvents).weeks;
+    return (react_1.default.createElement("div", { style: style, className: className }, weeks.map(function (w, i) { return (react_1.default.createElement(Week, { key: i, weekNumber: i, week: w }, w.map(function (d) { return (react_1.default.createElement(Day, { day: d === null ? d : d.day, date: d && d.date, events: d && allResolvedEvents[d.day] }, d && allResolvedEvents[d.day] ? (react_1.default.createElement(Events, { events: allResolvedEvents[d.day] })) : null)); }))); })));
 };
-Calendar.defaultProps = {
+Daytripper.defaultProps = {
     dayComponent: function (_a) {
         var date = _a.date;
         return react_1.default.createElement("div", null, date);
@@ -30,5 +28,9 @@ Calendar.defaultProps = {
         var children = _a.children;
         return react_1.default.createElement("div", null, children);
     },
+    eventComponent: function (_a) {
+        var events = _a.events;
+        return react_1.default.createElement("div", null, JSON.stringify(events));
+    }
 };
-exports.default = Calendar;
+exports.default = Daytripper;
